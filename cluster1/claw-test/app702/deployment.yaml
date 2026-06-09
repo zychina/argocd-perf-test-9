@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perf-test9-app702
+  namespace: clawtest
+  labels:
+    app: perf-test9-app702
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perf-test9-app702
+  template:
+    metadata:
+      labels:
+        app: perf-test9-app702
+    spec:
+      containers:
+      - name: perf-test9-app702
+        image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: data-vol
+          mountPath: /data
+      volumes:
+      - name: data-vol
+        persistentVolumeClaim:
+          claimName: perf-test9-app702-pvc

@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: perf-test9-app642-pvc
+  namespace: clawtest
+  labels:
+    app: perf-test9-app642
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      alicloud-pvname: perf-test9-app642-nas-pv
+  storageClassName: nas
+  volumeMode: Filesystem
+  volumeName: perf-test9-app642-nas-pv
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  finalizers:
+    - kubernetes.io/pv-protection
+  labels:
+    alicloud-pvname: perf-test9-app642-nas-pv
+  name: perf-test9-app642-nas-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 10Gi
+  csi:
+    driver: nasplugin.csi.alibabacloud.com
+    volumeAttributes:
+      path: ''
+      server: 121ctz5eqhxpbd0gglg-qac32.cn-hongkong.nas.aliyuncs.com
+    volumeHandle: perf-test9-app642-nas-pv
+  mountOptions:
+    - 'nolock,tcp,noresvport'
+    - vers=3
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nas
+  volumeMode: Filesystem

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: perf-test9-app754-configmap
+  namespace: clawtest
+  labels:
+    app: perf-test9-app754
+data:
+  key1: key1value
+  key2: key2value

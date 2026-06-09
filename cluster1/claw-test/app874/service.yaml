@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: perf-test9-app874-svc
+  namespace: clawtest
+  labels:
+    app: perf-test9-app874
+spec:
+  selector:
+    app: perf-test9-app874
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: ClusterIP
