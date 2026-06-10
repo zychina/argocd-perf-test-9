@@ -104,6 +104,13 @@ spec:
           value: "1024"
         - name: TZ
           value: "Asia/Shanghai"
+        resources:
+          requests:
+            cpu: 30m
+            memory: 100Mi
+          limits:
+            cpu: 30m
+            memory: 100Mi
         volumeMounts:
         - name: data-vol
           mountPath: /data
