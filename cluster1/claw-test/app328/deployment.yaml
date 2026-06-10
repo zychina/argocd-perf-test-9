@@ -117,22 +117,6 @@ spec:
         - name: config-vol
           mountPath: /etc/nginx/conf.d
           readOnly: true
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
       volumes:
       - name: data-vol
         persistentVolumeClaim:
