@@ -1,10 +1,47 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: perf-test9-app17-configmap
+  name: perf-test9-app17-config
   namespace: clawtest
   labels:
     app: perf-test9-app17
+    app.kubernetes.io/name: perf-test9-app17
+    app.kubernetes.io/component: config
+    app.kubernetes.io/part-of: argocd-perf-test
 data:
-  key1: key1value
-  key2: key2value
+  APP_NAME: "perf-test9-app17"
+  APP_VERSION: "1.0.0"
+  ENVIRONMENT: "performance-test"
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+  MAX_CONNECTIONS: "1024"
+  WORKER_PROCESSES: "auto"
+  KEEPALIVE_TIMEOUT: "65"
+  CLIENT_MAX_BODY_SIZE: "10m"
+  UPSTREAM_TIMEOUT: "60"
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+        location /healthz {
+            access_log off;
+            return 200 'ok';
+        }
+        location /ready {
+            access_log off;
+            return 200 'ready';
+        }
+    }
+  settings.json: |
+    {
+      "app": "perf-test9-app17",
+      "version": "1.0.0",
+      "features": {
+        "metrics": true,
+        "tracing": false
+      }
+    }

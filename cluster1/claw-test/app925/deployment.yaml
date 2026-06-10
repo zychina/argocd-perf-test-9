@@ -5,8 +5,40 @@ metadata:
   namespace: clawtest
   labels:
     app: perf-test9-app925
+    app.kubernetes.io/name: perf-test9-app925
+    app.kubernetes.io/instance: perf-test9-app925
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/component: web-server
+    app.kubernetes.io/part-of: argocd-perf-test
+    app.kubernetes.io/managed-by: argocd
+    team: platform-engineering
+    environment: performance-test
+    tier: frontend
+  annotations:
+    description: "Performance test application for ArgoCD scalability validation"
+    argocd.argoproj.io/managed-by: argocd-perf-test
+    argocd.argoproj.io/tracking-id: "perf-test9-app925:apps/Deployment:clawtest/perf-test9-app925"
+    deployment.kubernetes.io/revision: "1"
+    kubernetes.io/change-cause: "Initial deployment for performance testing"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+    prometheus.io/path: "/metrics"
+    sidecar.istio.io/inject: "false"
+    cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    app.kubernetes.io/build-timestamp: "2025-06-09T00:00:00Z"
+    app.kubernetes.io/git-repo: "https://github.com/zychina/argocd-perf-test-9"
+    app.kubernetes.io/git-commit: "ab1c2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9"
+    contact.team: "platform-engineering@example.com"
+    sla-tier: "best-effort"
 spec:
   replicas: 1
+  revisionHistoryLimit: 3
+  progressDeadlineSeconds: 600
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: perf-test9-app925
@@ -14,16 +46,90 @@ spec:
     metadata:
       labels:
         app: perf-test9-app925
+        app.kubernetes.io/name: perf-test9-app925
+        app.kubernetes.io/instance: perf-test9-app925
+        app.kubernetes.io/version: "1.0.0"
+        team: platform-engineering
+        environment: performance-test
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "80"
+        prometheus.io/path: "/metrics"
+        sidecar.istio.io/inject: "false"
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
     spec:
+      terminationGracePeriodSeconds: 30
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 1000
       containers:
       - name: perf-test9-app925
         image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+        imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: APP_NAME
+          value: "perf-test9-app925"
+        - name: APP_VERSION
+          value: "1.0.0"
+        - name: ENVIRONMENT
+          value: "performance-test"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: LOG_FORMAT
+          value: "json"
+        - name: METRICS_ENABLED
+          value: "true"
+        - name: MAX_CONNECTIONS
+          value: "1024"
+        - name: TZ
+          value: "Asia/Shanghai"
         volumeMounts:
         - name: data-vol
           mountPath: /data
+        - name: config-vol
+          mountPath: /etc/nginx/conf.d
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
       volumes:
       - name: data-vol
         persistentVolumeClaim:
           claimName: perf-test9-app925-pvc
+      - name: config-vol
+        configMap:
+          name: perf-test9-app925-config
