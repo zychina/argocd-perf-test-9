@@ -18,7 +18,6 @@ metadata:
     description: "Performance test application for ArgoCD scalability validation"
     argocd.argoproj.io/managed-by: argocd-perf-test
     argocd.argoproj.io/tracking-id: "perf-test9-app959:apps/Deployment:clawtest/perf-test9-app959"
-    deployment.kubernetes.io/revision: "1"
     kubernetes.io/change-cause: "Initial deployment for performance testing"
     prometheus.io/scrape: "true"
     prometheus.io/port: "80"
@@ -53,7 +52,7 @@ spec:
         environment: performance-test
       annotations:
         app.kubernetes.io/name: "perf-test9-app959"
-        app.kubernetes.io/version: "1.0.0"
+        app.kubernetes.io/version: "1.1.0"
         app.kubernetes.io/component: "web-server"
         prometheus.io/scrape: "true"
         prometheus.io/port: "80"
