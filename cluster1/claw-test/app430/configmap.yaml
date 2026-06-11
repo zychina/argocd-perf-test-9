@@ -20,74 +20,28 @@ data:
   CLIENT_MAX_BODY_SIZE: "10m"
   UPSTREAM_TIMEOUT: "60"
   nginx.conf: |
-    worker_processes auto;
-    error_log /var/log/nginx/error.log warn;
-    pid /var/run/nginx.pid;
-    events {
-        worker_connections 1024;
-        multi_accept on;
-        use epoll;
-    }
-    http {
-        include /etc/nginx/mime.types;
-        default_type application/octet-stream;
-        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-        access_log /var/log/nginx/access.log main;
-        sendfile on;
-        tcp_nopush on;
-        tcp_nodelay on;
-        keepalive_timeout 65;
-        gzip on;
-        gzip_types text/plain application/json application/javascript text/css;
-        server {
-            listen 80;
-            server_name localhost;
-            location / {
-                root /usr/share/nginx/html;
-                index index.html index.htm;
-            }
-            location /healthz {
-                access_log off;
-                return 200 'ok';
-            }
-            location /ready {
-                access_log off;
-                return 200 'ready';
-            }
-            location /metrics {
-                access_log off;
-                stub_status on;
-            }
+    server {
+        listen 80;
+        server_name localhost;
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+        location /healthz {
+            access_log off;
+            return 200 'ok';
+        }
+        location /ready {
+            access_log off;
+            return 200 'ready';
         }
     }
   settings.json: |
     {
       "app": "perf-test9-app430",
       "version": "1.0.0",
-      "environment": "performance-test",
       "features": {
         "metrics": true,
-        "tracing": false,
-        "logging": true,
-        "healthCheck": true
-      },
-      "database": {
-        "host": "db.clawtest.svc.cluster.local",
-        "port": 5432,
-        "name": "perf-test9-app430-db",
-        "pool_size": 10,
-        "timeout": 30
-      },
-      "cache": {
-        "host": "redis.clawtest.svc.cluster.local",
-        "port": 6379,
-        "ttl": 3600
-      },
-      "observability": {
-        "metrics_port": 9090,
-        "trace_endpoint": "http://jaeger.monitoring:14268/api/traces",
-        "log_level": "info"
+        "tracing": false
       }
     }
