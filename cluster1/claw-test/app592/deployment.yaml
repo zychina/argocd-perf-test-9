@@ -52,7 +52,7 @@ spec:
         environment: performance-test
       annotations:
         app.kubernetes.io/name: "perf-test9-app592"
-        app.kubernetes.io/version: "1.1.0"
+        app.kubernetes.io/version: "1.2.0"
         app.kubernetes.io/component: "web-server"
         prometheus.io/scrape: "true"
         prometheus.io/port: "80"
